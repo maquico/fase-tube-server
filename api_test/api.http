@@ -1,11 +1,10 @@
-@base_url = http://localhost:3001
+@base_url = https://fase-tube-server-c537f172c3b7.herokuapp.com
 
 ### Create a new video ###
 POST {{base_url}}/api/videos/add
 Content-Type: application/json
 
 {
-    "video_id": 1,
     "duracion": 20,
     "titulo": "20 Seconds Timer with Music",
     "descripcion": "Video de prueba",

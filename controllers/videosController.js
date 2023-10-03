@@ -5,7 +5,6 @@ const path = require('path');
 const createVideo = async (req, res) => {
   try {
     const {
-      video_id,
       titulo,
       miniatura_ruta,
       video_ruta,
@@ -19,7 +18,6 @@ const createVideo = async (req, res) => {
     // Use Prisma to create a new video record
     const video = await prisma.VIDEOS.create({
       data: {
-        video_id,
         titulo,
         miniatura_ruta,
         video_ruta,
