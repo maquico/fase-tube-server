@@ -53,6 +53,7 @@ const sign_in = async (req, res) => {
 const webhookSecret = process.env.WEBHOOK_SECRET || "";
 
 async function webhookHandler(req, res) {
+  console.log("Webhook recibido")
   const payload = await req.body; // Use req.body to access the request body
   const wh = new Webhook(webhookSecret);
   let evt = null;
@@ -68,7 +69,7 @@ async function webhookHandler(req, res) {
   }
 
   const eventType = evt.type;
-  if (eventType === "user.created" || eventType === "user.updated") {
+  if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
     const { id, ...attributes } = evt.data;
     console.log("Usuario creado o actualizado:" + id)
     console.log("Atributos: " + attributes)
