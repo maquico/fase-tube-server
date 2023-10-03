@@ -1,0 +1,31 @@
+@base_url = http://localhost:3001
+
+### Create a new video ###
+POST {{base_url}}/api/videos/add
+Content-Type: application/json
+
+{
+    "video_id": 1,
+    "duracion": 20,
+    "titulo": "20 Seconds Timer with Music",
+    "descripcion": "Video de prueba",
+    "miniatura_ruta": "miniaturaPlaceholder.png",
+    "video_ruta": "20secondstimer.mp4",
+    "fecha_publicacion": "2023-09-14T12:00:00Z",
+    "user_id": 1,
+    "visibilidad_id": 1
+}
+
+### Get Video by ID ###
+GET {{base_url}}/api/videos/1
+
+
+### Get all videos ###
+GET {{base_url}}/api/videos
+
+
+
+
+
+
+

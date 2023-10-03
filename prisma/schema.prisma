@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model COMENTARIOS {
+  comentario_id    Int          @id @default(autoincrement())
+  contenido        String       @db.VarChar(255)
+  fecha_reg        DateTime     @default(now()) @db.DateTime(0)
+  likes            Int          @default(0)
+  dislikes         Int          @default(0)
+  total_respuestas Int          @default(0)
+  user_id          Int
+  video_id         Int
+  VIDEOS           VIDEOS       @relation(fields: [video_id], references: [video_id], onDelete: NoAction, onUpdate: NoAction, map: "comentarios_ibfk_1")
+  USUARIOS         USUARIOS     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "comentarios_ibfk_2")
+  RESPUESTAS       RESPUESTAS[]
+
+  @@index([user_id], map: "user_id")
+  @@index([video_id], map: "video_id")
+}
+
+model RESPUESTAS {
+  respuesta_id  Int         @id @default(autoincrement())
+  contenido     String      @db.VarChar(255)
+  likes         Int         @default(0)
+  dislikes      Int         @default(0)
+  fecha_reg     DateTime    @default(now()) @db.DateTime(0)
+  comentario_id Int
+  user_id       Int
+  COMENTARIOS   COMENTARIOS @relation(fields: [comentario_id], references: [comentario_id], onDelete: NoAction, onUpdate: NoAction, map: "respuestas_ibfk_1")
+  USUARIOS      USUARIOS    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "respuestas_ibfk_2")
+
+  @@index([comentario_id], map: "comentario_id")
+  @@index([user_id], map: "user_id")
+}
+
+model SUSCRIPCIONES {
+  suscripcion_id                                 Int      @id @default(autoincrement())
+  suscriptor_id                                  Int
+  canal_id                                       Int
+  fecha_reg                                      DateTime @default(now()) @db.DateTime(0)
+  USUARIOS_SUSCRIPCIONES_suscriptor_idToUSUARIOS USUARIOS @relation("SUSCRIPCIONES_suscriptor_idToUSUARIOS", fields: [suscriptor_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "suscripciones_ibfk_1")
+  USUARIOS_SUSCRIPCIONES_canal_idToUSUARIOS      USUARIOS @relation("SUSCRIPCIONES_canal_idToUSUARIOS", fields: [canal_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "suscripciones_ibfk_2")
+
+  @@index([canal_id], map: "canal_id")
+  @@index([suscriptor_id], map: "suscriptor_id")
+}
+
+model TAGS {
+  tag_id      Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(100)
+  VIDEOS_TAGS VIDEOS_TAGS[]
+}
+
+model USUARIOS {
+  user_id                                             Int             @id @default(autoincrement())
+  username                                            String          @unique(map: "username") @db.VarChar(100)
+  nombres                                             String          @db.VarChar(100)
+  apellidos                                           String          @db.VarChar(100)
+  fecha_nac                                           DateTime?       @db.DateTime(0)
+  fecha_reg                                           DateTime        @default(now()) @db.DateTime(0)
+  corrreo                                             String          @db.VarChar(100)
+  clave                                               String?         @db.VarChar(100)
+  foto_ruta                                           String?         @db.VarChar(255)
+  descripcion                                         String?         @db.VarChar(255)
+  suscriptores                                        Int             @default(0)
+  total_videos                                        Int             @default(0)
+  total_vistas                                        Int             @default(0)
+  COMENTARIOS                                         COMENTARIOS[]
+  RESPUESTAS                                          RESPUESTAS[]
+  SUSCRIPCIONES_SUSCRIPCIONES_suscriptor_idToUSUARIOS SUSCRIPCIONES[] @relation("SUSCRIPCIONES_suscriptor_idToUSUARIOS")
+  SUSCRIPCIONES_SUSCRIPCIONES_canal_idToUSUARIOS      SUSCRIPCIONES[] @relation("SUSCRIPCIONES_canal_idToUSUARIOS")
+  VIDEOS                                              VIDEOS[]
+}
+
+model VIDEOS {
+  video_id          Int           @id @default(autoincrement())
+  titulo            String        @db.VarChar(100)
+  miniatura_ruta    String        @db.VarChar(255)
+  video_ruta        String        @db.VarChar(255)
+  likes             Int           @default(0)
+  dislikes          Int           @default(0)
+  vistas            Int           @default(0)
+  duracion          Int
+  fecha_reg         DateTime      @default(now()) @db.DateTime(0)
+  fecha_publicacion DateTime      @db.DateTime(0)
+  descripcion       String        @db.VarChar(255)
+  user_id           Int
+  visibilidad_id    Int
+  COMENTARIOS       COMENTARIOS[]
+  VISIBILIDAD       VISIBILIDAD   @relation(fields: [visibilidad_id], references: [visibilidad_id], onDelete: NoAction, onUpdate: NoAction, map: "videos_ibfk_1")
+  USUARIOS          USUARIOS      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "videos_ibfk_2")
+  VIDEOS_TAGS       VIDEOS_TAGS[]
+
+  @@index([user_id], map: "user_id")
+  @@index([visibilidad_id], map: "visibilidad_id")
+}
+
+model VIDEOS_TAGS {
+  video_id Int
+  tag_id   Int
+  TAGS     TAGS   @relation(fields: [tag_id], references: [tag_id], onDelete: NoAction, onUpdate: NoAction, map: "videos_tags_ibfk_1")
+  VIDEOS   VIDEOS @relation(fields: [video_id], references: [video_id], onDelete: NoAction, onUpdate: NoAction, map: "videos_tags_ibfk_2")
+
+  @@id([video_id, tag_id])
+  @@index([tag_id], map: "tag_id")
+}
+
+model VISIBILIDAD {
+  visibilidad_id Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(100)
+  VIDEOS         VIDEOS[]
+}
