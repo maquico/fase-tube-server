@@ -88,55 +88,50 @@ async function webhookHandler(req, res) {
   }
   
   const eventType = evt.type;
-  if (eventType === "user.created" || eventType === "user.updated") {
-    let {id, ...attributes}   = evt.data;
-    attributes = Object.entries(attributes)
-    console.log("ID: " + id)
-    console.log("TYPE ID: " + typeof id)
-    console.log("ATTRIBUTES: " + attributes)
-    console.log("TYPE ATTR: " + typeof attributes)
-
+  if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
+    let { id, ...attributes } = evt.data;
+    attributes = Object.entries(attributes);
+    console.log("ID: " + id);
+    console.log("TYPE ID: " + typeof id);
+    console.log("ATTRIBUTES: " + attributes);
+    console.log("TYPE ATTR: " + typeof attributes);
+  
     for (const [key, value] of attributes) {
       if (key === 'email_addresses') {
         // Check if the key is 'email_addresses'
         emailObject = value[0]; // Assuming it's the first element in the array
         emailAddress = emailObject.email_address;
         console.log(`Email Address: ${emailAddress}`);
+      } else if (key === 'first_name' && value) {
+        // Check if the key is 'first_name' and it has a value
+        const username = await generarUsername(emailAddress);
+  
+        try {
+          await prisma.USUARIOS.upsert({
+            where: { username: username },
+            create: {
+              clave: id,
+              corrreo: emailAddress,
+              nombres: value, // Use the 'first_name' value
+              apellidos: attributes.last_name,
+              username: username,
+            },
+            update: {
+              corrreo: emailAddress,
+              nombres: value, // Use the 'first_name' value
+              apellidos: attributes.last_name,
+              username: username,
+            },
+          });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({}); // Return a JSON response with a 500 status code
+        }
       } else {
         console.log(`${key}: ${value}`);
       }
     }
-    const username = await generarUsername(emailAddress);
-    const nombres = attributes.first_name
-    const apellidos = attributes.last_name
-
-    console.log(nombres)
-    console.log(apellidos)
-
-    try {
-      await prisma.USUARIOS.upsert({
-        where: { username: username },
-        create: {
-          clave: id,
-          corrreo: emailAddress,
-          nombres: nombres,
-          apellidos: apellidos,
-          username: username,
-        },
-        update: { 
-          corrreo: emailAddress,
-          nombres: nombres,
-          apellidos: apellidos,
-          username: username,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({}); // Return a JSON response with a 500 status code
-    }
   }
-
-  return res.status(200).json({}); // Return a JSON response with a 200 status code
 }
 
 
