@@ -113,13 +113,13 @@ async function webhookHandler(req, res) {
         where: { clave: id },
         create: {
           clave: id,
-          corrreo: email,
+          corrreo: emailAddress,
           nombres: attributes.first_name,
           apellidos: attributes.last_name,
           username: username,
         },
         update: { 
-          corrreo: email,
+          corrreo: emailAddress,
           nombres: attributes.first_name,
           apellidos: attributes.last_name,
           username: username,
