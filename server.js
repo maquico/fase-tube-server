@@ -9,6 +9,7 @@ const fs = require('fs');
 // const { IncomingHttpHeaders } = require("http");
 const { Webhook } = require("svix");
 const prisma = require('./config/db');
+const { listenerCount } = require('process');
 
 const destinationDir = 'uploads/videos';
 if (!fs.existsSync(destinationDir)) {
@@ -86,7 +87,7 @@ async function webhookHandler(req, res) {
   
   const eventType = evt.type;
   if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
-    const { id, ...attributes } = evt.data;
+    let { id, ...attributes } = evt.data;
     attributes = JSON.stringify(attributes)
     console.log(attributes)
     console.log("EMAIL: " + attributes.email_addresses.email_address)
