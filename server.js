@@ -90,7 +90,7 @@ async function webhookHandler(req, res) {
     let {id, ...attributes}   = evt.data;
     console.log("ID: " + id)
     console.log("TYPE ID: " + typeof id)
-    console.log("ATTRIBUTES: " + attributes)
+    console.log("ATTRIBUTES: " + attributes[0])
     console.log("TYPE ATTR: " + typeof attributes)
     attributes = JSON.parse(attributes)
     console.log("ATTRIBUTES: " + attributes)
