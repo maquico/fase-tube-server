@@ -89,10 +89,7 @@ const getAllVideos = async (req, res) => {
 const uploadVideo = async (req, res) => {
 
 // Create the destination directory if it doesn't exist
-const destinationDir = 'uploads/videos';
-if (!fs.existsSync(destinationDir)) {
-  fs.mkdirSync(destinationDir, { recursive: true });
-}
+
   try {
     // Check if a file was provided in the request
     if (!req.file) {

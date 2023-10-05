@@ -4,6 +4,12 @@ const cors = require('cors');
 const videoRoutes = require('./routes/videosRouter');
 const usersRoutes = require('./routes/usersRouter');
 const multer = require('multer');
+const fs = require('fs');
+
+const destinationDir = 'uploads/videos';
+if (!fs.existsSync(destinationDir)) {
+  fs.mkdirSync(destinationDir, { recursive: true });
+}
 
 env.config();
 
