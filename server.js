@@ -78,31 +78,32 @@ async function webhookHandler(req, res) {
       JSON.stringify(payload),
       req.headers // Use req.headers to access the request headers
     );
+    console.log("Evento verificado" + evt)
   } catch (err) {
     console.error(err.message);
     return res.status(400).json({}); // Return a JSON response with a 400 status code
   }
+  
+  // const eventType = evt.type;
+  // if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
+  //   const { id, ...attributes } = evt.data;
+  //   console.log("Usuario creado o actualizado:" + id)
+  //   console.log("Atributos: " + attributes)
 
-  const eventType = evt.type;
-  if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
-    const { id, ...attributes } = evt.data;
-    console.log("Usuario creado o actualizado:" + id)
-    console.log("Atributos: " + attributes)
-
-    try {
-      await prisma.USUARIOS.upsert({
-        where: { clave: id },
-        create: {
-          usuario_id: id,
-          attributes,
-        },
-        update: { attributes },
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({}); // Return a JSON response with a 500 status code
-    }
-  }
+  //   try {
+  //     await prisma.USUARIOS.upsert({
+  //       where: { clave: id },
+  //       create: {
+  //         clave: id
+        
+  //       },
+  //       update: { attributes },
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({}); // Return a JSON response with a 500 status code
+  //   }
+  // }
 
   return res.status(200).json({}); // Return a JSON response with a 200 status code
 }
