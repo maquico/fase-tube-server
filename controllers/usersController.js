@@ -1,10 +1,5 @@
 // usersController.js
 const prisma = require('../config/db');
-const { clerkClient } = require("@clerk/clerk-sdk-node");
-const { IncomingHttpHeaders } = require("http");
-const { Webhook, WebhookRequiredHeaders } = require("svix");
-
-
 const sign_in = async (req, res) => {
 
     try {
@@ -55,5 +50,4 @@ const sign_in = async (req, res) => {
 
 module.exports = {
     sign_in,
-    webhookHandler,
 }

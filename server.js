@@ -5,6 +5,9 @@ const videoRoutes = require('./routes/videosRouter');
 const usersRoutes = require('./routes/usersRouter');
 const multer = require('multer');
 const fs = require('fs');
+// const { clerkClient } = require("@clerk/clerk-sdk-node");
+// const { IncomingHttpHeaders } = require("http");
+const { Webhook } = require("svix");
 
 const destinationDir = 'uploads/videos';
 if (!fs.existsSync(destinationDir)) {
