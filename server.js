@@ -90,13 +90,13 @@ async function webhookHandler(req, res) {
     let {id, ...attributes}   = evt.data;
     console.log("ID: " + id)
     console.log("TYPE ID: " + typeof id)
-    console.log("ATTRIBUTES: " + attributes[0])
+    console.log("ATTRIBUTES: " + Object.entries(attributes))
     console.log("TYPE ATTR: " + typeof attributes)
     attributes = JSON.parse(attributes)
     console.log("ATTRIBUTES: " + attributes)
     console.log("EMAIL: " + attributes.email_addresses[0].email_address)
 
-    
+    "Object object"
     const email = attributes.email_addresses.email_address;
     const username = await generarUsername(email);
     
