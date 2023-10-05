@@ -88,7 +88,7 @@ async function webhookHandler(req, res) {
   }
   
   const eventType = evt.type;
-  if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
+  if (eventType === "user.created" || eventType === "user.updated") {
     let {id, ...attributes}   = evt.data;
     attributes = Object.entries(attributes)
     console.log("ID: " + id)
@@ -107,21 +107,26 @@ async function webhookHandler(req, res) {
       }
     }
     const username = await generarUsername(emailAddress);
-    
+    const nombres = attributes.first_name
+    const apellidos = attributes.last_name
+
+    console.log(nombres)
+    console.log(apellidos)
+
     try {
       await prisma.USUARIOS.upsert({
         where: { username: username },
         create: {
           clave: id,
           corrreo: emailAddress,
-          nombres: attributes.first_name,
-          apellidos: attributes.last_name,
+          nombres: nombres,
+          apellidos: apellidos,
           username: username,
         },
         update: { 
           corrreo: emailAddress,
-          nombres: attributes.first_name,
-          apellidos: attributes.last_name,
+          nombres: nombres,
+          apellidos: apellidos,
           username: username,
         },
       });
