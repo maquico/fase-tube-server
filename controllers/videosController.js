@@ -14,7 +14,7 @@ const createAndUploadVideo = async (req, res) => {
     const videoFile = req.file;
 
     // Extract metadata about the video from the request body
-    const {
+    let {
       titulo,
       miniatura_ruta,
       descripcion,
