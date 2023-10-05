@@ -3,25 +3,48 @@ const prisma = require('../config/db');
 const path = require('path');
 const fs = require('fs');
 
-const createVideo = async (req, res) => {
+const createAndUploadVideo = async (req, res) => {
   try {
+    // Check if a file was provided in the request
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file provided' });
+    }
+
+    // Access the uploaded video file using req.file
+    const videoFile = req.file;
+
+    // Extract metadata about the video from the request body
     const {
       titulo,
       miniatura_ruta,
-      video_ruta,
       descripcion,
       duracion,
       fecha_publicacion,
-      user_id, // Assuming you get the user_id from the request
-      visibilidad_id, // Assuming you get the visibilidad_id from the request
+      user_id,
+      visibilidad_id,
     } = req.body;
+
+    // Generate a unique filename for the video
+    const videoFileName = Date.now() + '-' + videoFile.originalname;
+
+    // Create the destination directory if it doesn't exist
+    const destinationDir = 'uploads/videos';
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
+    }
+
+    // Set the path where the video will be stored
+    const videoPath = path.join(destinationDir, videoFileName);
+
+    // Move the uploaded video file to the specified path
+    fs.renameSync(videoFile.path, videoPath);
 
     // Use Prisma to create a new video record
     const video = await prisma.VIDEOS.create({
       data: {
         titulo,
         miniatura_ruta,
-        video_ruta,
+        video_ruta: videoFileName, // Store the actual filename in video_ruta
         descripcion,
         duracion,
         fecha_publicacion,
@@ -30,12 +53,13 @@ const createVideo = async (req, res) => {
       },
     });
 
-    res.status(201).json({ message: 'Video created successfully', video });
+    res.status(201).json({ message: 'Video created and uploaded successfully', video });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error creating video' });
+    res.status(500).json({ error: 'Error creating and uploading video' });
   }
 };
+
 
 
 const getVideoById = async (req, res) => {
@@ -86,36 +110,11 @@ const getAllVideos = async (req, res) => {
   }
 }
 
-const uploadVideo = async (req, res) => {
-
-// Create the destination directory if it doesn't exist
-
-  try {
-    // Check if a file was provided in the request
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file provided' });
-    }
-
-    // Access the uploaded video file using req.file
-    const videoFile = req.file;
-
-    const videoPath = videoFile.path; // Path to the uploaded video file
-
-    // You can now save this videoPath to your database or perform any other necessary operations
-
-    res.status(201).json({ message: 'Video uploaded successfully', videoPath });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error uploading video' });
-  }
-};
-
 module.exports = {
-  createVideo,
+  createAndUploadVideo,
   getVideoById,
   getAllVideos,
   getVideoFileById,
-  uploadVideo
 };
 
 
