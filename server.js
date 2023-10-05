@@ -61,17 +61,18 @@ app.listen(process.env.PORT, () => {
 
 
 async function webhookHandler(req, res) {
-  
-  try {
-    console.log("Webhook recibido")
-  const payload = await req.body; // Use req.body to access the request body
-  const wh = new Webhook(webhookSecret);
+  let wh = null;
+  let payload = null;
   let evt = null;
+
+  try {
+  console.log("Webhook recibido")
+  payload = await req.body; // Use req.body to access the request body
+  wh = new Webhook(webhookSecret);
   } catch (error) {
     console.error(error);
   }
   
-
   try {
     evt = wh.verify(
       JSON.stringify(payload),
