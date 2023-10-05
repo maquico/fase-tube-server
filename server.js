@@ -41,6 +41,13 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', videoRoutes);
 app.use('/api', usersRoutes);
 
+app.post('/api/webhooks/user', (req, res) => {
+  console.log("Webhook request received");
+  console.log(req.body);
+  res.status(200).send();
+}
+);
+
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });

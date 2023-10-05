@@ -78,7 +78,7 @@ async function webhookHandler(req, res) {
       await prisma.USUARIOS.upsert({
         where: { clave: id },
         create: {
-          externalId: id,
+          usuario_id: id,
           attributes,
         },
         update: { attributes },
