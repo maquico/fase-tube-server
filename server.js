@@ -87,8 +87,9 @@ async function webhookHandler(req, res) {
   const eventType = evt.type;
   if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
     const { id, ...attributes } = evt.data;
+    attributes = JSON.parse(attributes)
     console.log(attributes)
-    console.log("EMAIL: " + JSON.stringify(attributes.email_addresses))
+    console.log("EMAIL: " + attributes.email_addresses.email_address)
 
     
     const email = attributes.email_addresses.email_address;
