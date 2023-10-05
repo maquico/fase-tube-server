@@ -65,6 +65,8 @@ async function webhookHandler(req, res) {
   let wh = null;
   let payload = null;
   let evt = null;
+  let emailObject;
+  let emailAddress;
 
   try {
   console.log("Webhook recibido")
@@ -93,13 +95,18 @@ async function webhookHandler(req, res) {
     console.log("TYPE ID: " + typeof id)
     console.log("ATTRIBUTES: " + attributes)
     console.log("TYPE ATTR: " + typeof attributes)
-    attributes = JSON.parse(attributes)
-    console.log("ATTRIBUTES: " + attributes)
-    console.log("EMAIL: " + attributes.email_addresses.email_address)
 
-    "Object object"
-    const email = attributes.email_addresses.email_address;
-    const username = await generarUsername(email);
+    for (const [key, value] of attributes) {
+      if (key === 'email_addresses') {
+        // Check if the key is 'email_addresses'
+        emailObject = value[0]; // Assuming it's the first element in the array
+        emailAddress = emailObject.email_address;
+        console.log(`Email Address: ${emailAddress}`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    }
+    const username = await generarUsername(emailAddress);
     
     try {
       await prisma.USUARIOS.upsert({
