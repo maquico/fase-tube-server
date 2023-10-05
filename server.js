@@ -8,7 +8,7 @@ const fs = require('fs');
 // const { clerkClient } = require("@clerk/clerk-sdk-node");
 // const { IncomingHttpHeaders } = require("http");
 const { Webhook } = require("svix");
-const prisma = require('../config/db');
+const prisma = require('/config/db');
 
 const destinationDir = 'uploads/videos';
 if (!fs.existsSync(destinationDir)) {
