@@ -67,6 +67,9 @@ async function webhookHandler(req, res) {
   let evt = null;
   let emailObject;
   let emailAddress;
+  let nombres;
+  let apellidos;
+  let username;
 
   try {
   console.log("Webhook recibido")
@@ -104,22 +107,28 @@ async function webhookHandler(req, res) {
         console.log(`Email Address: ${emailAddress}`);
       } else if (key === 'first_name' && value) {
         // Check if the key is 'first_name' and it has a value
-        const username = await generarUsername(emailAddress);
-  
-        try {
-          await prisma.USUARIOS.upsert({
+        username = await generarUsername(emailAddress);
+        nombres = value
+      } else if (key === 'last_name' && value){
+        apellidos = value
+      }
+    }
+    
+    console.log("NOMBRES")
+    try {
+        await prisma.USUARIOS.upsert({
             where: { username: username },
             create: {
               clave: id,
               corrreo: emailAddress,
-              nombres: value, // Use the 'first_name' value
-              apellidos: attributes.last_name,
+              nombres: nombres, // Use the 'first_name' value
+              apellidos: apellidos,
               username: username,
             },
             update: {
               corrreo: emailAddress,
-              nombres: value, // Use the 'first_name' value
-              apellidos: attributes.last_name,
+              nombres: nombres, // Use the 'first_name' value
+              apellidos: apellidos,
               username: username,
             },
           });
@@ -127,12 +136,10 @@ async function webhookHandler(req, res) {
           console.error(error);
           return res.status(500).json({}); // Return a JSON response with a 500 status code
         }
-      } else {
-        console.log(`${key}: ${value}`);
       }
     }
-  }
-}
+
+
 
 
 async function generarUsername(email){
