@@ -24,6 +24,10 @@ const createAndUploadVideo = async (req, res) => {
       visibilidad_id,
     } = req.body;
 
+    duracion = Number(duracion);
+    user_id = Number(user_id);
+    visibilidad_id = Number(visibilidad_id);
+
     // Generate a unique filename for the video
     const videoFileName = Date.now() + '-' + videoFile.originalname;
 
