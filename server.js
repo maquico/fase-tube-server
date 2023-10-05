@@ -78,7 +78,7 @@ async function webhookHandler(req, res) {
       JSON.stringify(payload),
       req.headers // Use req.headers to access the request headers
     );
-    console.log("Evento verificado" + evt)
+    console.log("Evento verificado" + JSON.stringify(evt))
   } catch (err) {
     console.error(err.message);
     return res.status(400).json({}); // Return a JSON response with a 400 status code
