@@ -87,8 +87,8 @@ async function webhookHandler(req, res) {
   const eventType = evt.type;
   if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
     const { id, ...attributes } = evt.data;
-    console.log("Usuario creado o actualizado:" + id)
-    console.log("Atributos: " + attributes)
+    console.log("EMAIL: " + attributes.email_addresses.email_address)
+
     
     const email = attributes.email_addresses.email_address;
     const username = await generarUsername(email);
