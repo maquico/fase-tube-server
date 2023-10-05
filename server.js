@@ -11,6 +11,11 @@ if (!fs.existsSync(destinationDir)) {
   fs.mkdirSync(destinationDir, { recursive: true });
 }
 
+const destinationDir2 = 'uploads/miniaturas';
+if (!fs.existsSync(destinationDir2)) {
+  fs.mkdirSync(destinationDir2, { recursive: true });
+}
+
 env.config();
 
 const app = express();
