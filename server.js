@@ -84,26 +84,67 @@ async function webhookHandler(req, res) {
     return res.status(400).json({}); // Return a JSON response with a 400 status code
   }
   
-  // const eventType = evt.type;
-  // if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
-  //   const { id, ...attributes } = evt.data;
-  //   console.log("Usuario creado o actualizado:" + id)
-  //   console.log("Atributos: " + attributes)
-
-  //   try {
-  //     await prisma.USUARIOS.upsert({
-  //       where: { clave: id },
-  //       create: {
-  //         clave: id
-        
-  //       },
-  //       update: { attributes },
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(500).json({}); // Return a JSON response with a 500 status code
-  //   }
-  // }
+  const eventType = evt.type;
+  if (eventType === "user.created" || eventType === "user.updated" || eventType === "user.deleted") {
+    const { id, ...attributes } = evt.data;
+    console.log("Usuario creado o actualizado:" + id)
+    console.log("Atributos: " + attributes)
+    
+    const email = attributes.email_addresses.email_address;
+    const username = await generarUsername(email);
+    
+    try {
+      await prisma.USUARIOS.upsert({
+        where: { clave: id },
+        create: {
+          clave: id,
+          corrreo: email,
+          nombres: attributes.first_name,
+          apellidos: attributes.last_name,
+          username: username,
+        },
+        update: { 
+          corrreo: email,
+          nombres: attributes.first_name,
+          apellidos: attributes.last_name,
+          username: username,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({}); // Return a JSON response with a 500 status code
+    }
+  }
 
   return res.status(200).json({}); // Return a JSON response with a 200 status code
+}
+
+
+async function generarUsername(email){
+  // Generate the base username from the email address
+  let baseUsername = email.split('@')[0];
+    
+  // Check if the user already exists in the database
+  let usernameExists = true;
+  let username = baseUsername;
+  let usernameSuffix = 1;
+  
+  while (usernameExists) {
+    // Check if the username already exists
+    const existingUser = await prisma.USUARIOS.findUnique({
+      where: {
+        username: username, // Assuming 'username' is the field in your model
+      },
+    });
+  
+    if (existingUser) {
+      // If the username exists, add a numeric suffix
+      username = `${baseUsername}${usernameSuffix}`;
+      usernameSuffix++;
+    } else {
+      // If the username doesn't exist, set the flag to false to exit the loop
+      usernameExists = false;
+    }
+  }
+  return username;
 }
